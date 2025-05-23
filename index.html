@@ -12,8 +12,12 @@
         <p>اختر صورة أو التقطها بالكاميرا!</p>
 
         <input type="file" id="imageUpload" accept="image/*">
-        <button onclick="captureImage()">📷 التقاط صورة</button>
-        <button onclick="uploadImage()">📤 إرسال</button>
+        <button onclick="startCamera()">📷 تشغيل الكاميرا</button>
+        <button onclick="captureImage()">📸 التقاط صورة</button>
+        <button onclick="uploadImage()">📤 إرسال الصورة</button>
+
+        <video id="cameraPreview" autoplay></video>
+        <canvas id="canvas" style="display:none;"></canvas>
 
         <div id="result"></div>
     </div>
