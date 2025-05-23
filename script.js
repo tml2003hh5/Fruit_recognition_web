@@ -1,10 +1,7 @@
-let video = document.getElementById("cameraPreview");
-let canvas = document.getElementById("canvas");
-let context = canvas.getContext("2d");
-
 function startCamera() {
     navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
+        let video = document.getElementById("cameraPreview");
         video.srcObject = stream;
     })
     .catch(error => {
@@ -13,14 +10,20 @@ function startCamera() {
 }
 
 function captureImage() {
+    let video = document.getElementById("cameraPreview");
+    let canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
+    let context = canvas.getContext("2d");
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
+
     let imageData = canvas.toDataURL("image/png");
-    document.getElementById("result").innerHTML = `<img src="${imageData}" width="100">`;
-    
-    // حفظ الصورة وإرسالها للسيرفر
+
+    document.getElementById("result").innerHTML = `
+        <img src="${imageData}" width="100">
+    `;
+
+    // إرسال الصورة للسيرفر
     sendImageToServer(imageData);
 }
 
