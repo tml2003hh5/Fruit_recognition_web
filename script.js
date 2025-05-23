@@ -1,41 +1,27 @@
-function startCamera() {
-    navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-        let video = document.getElementById("cameraPreview");
-        video.srcObject = stream;
-    })
-    .catch(error => {
-        alert("⚠️ لا يمكن تشغيل الكاميرا: " + error);
-    });
-}
+function uploadImage() {
+    let fileInput = document.getElementById('imageUpload');
+    let file = fileInput.files[0];
 
-function captureImage() {
-    let video = document.getElementById("cameraPreview");
-    let canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    let context = canvas.getContext("2d");
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    if (!file) {
+        alert("⚠️ الرجاء اختيار صورة أولًا!");
+        return;
+    }
 
-    let imageData = canvas.toDataURL("image/png");
+    let formData = new FormData();
+    formData.append("image", file);
 
-    document.getElementById("result").innerHTML = `
-        <img src="${imageData}" width="100">
-    `;
+    // عرض الصورة فورًا قبل إرسالها للسيرفر
+    let imagePreview = document.getElementById("previewImage");
+    imagePreview.src = URL.createObjectURL(file);
+    imagePreview.style.display = "block"; // عرض الصورة بعد اختيارها
 
-    // إرسال الصورة للسيرفر
-    sendImageToServer(imageData);
-}
-
-function sendImageToServer(imageData) {
     fetch("https://your-ngrok-url.ngrok.io/predict", { 
         method: "POST", 
-        body: JSON.stringify({ image: imageData }), 
-        headers: { "Content-Type": "application/json" }
+        body: formData 
     })
     .then(response => response.json())
     .then(data => {
-        document.getElementById("result").innerHTML += `
+        document.getElementById("result").innerHTML = `
             <h2>🔍 ${data.fruit_name}</h2>
             <p>🔥 السعرات الحرارية: ${data.calories}</p>
             <p>📌 نسبة التعرف: ${data.confidence}</p>
