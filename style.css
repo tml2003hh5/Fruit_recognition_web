@@ -14,7 +14,7 @@ body {
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
 }
 
-button {
+button, .custom-file-upload {
     background: #28a745;
     color: white;
     padding: 12px;
@@ -23,10 +23,16 @@ button {
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    display: inline-block;
 }
 
-button:hover {
+button:hover, .custom-file-upload:hover {
     background: #218838;
+}
+
+/* Styling the file upload button */
+.custom-file-upload input {
+    display: none;
 }
 
 video, img {
