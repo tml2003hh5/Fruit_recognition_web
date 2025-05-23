@@ -2,7 +2,7 @@ let video = document.getElementById("cameraPreview");
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 
-// Start Camera
+// 📌 تشغيل الكاميرا
 document.getElementById("startCamera").addEventListener("click", function() {
     navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
@@ -10,24 +10,26 @@ document.getElementById("startCamera").addEventListener("click", function() {
         video.style.display = "block";
     })
     .catch(error => {
-        alert("⚠️ Camera access denied or not supported: " + error);
+        alert("⚠️ لا يمكن تشغيل الكاميرا: " + error);
     });
 });
 
-// Capture Image from Live Camera
+// 📌 التقاط صورة من الكاميرا وإرسالها إلى السيرفر
 document.getElementById("captureImage").addEventListener("click", function() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     let imageData = canvas.toDataURL("image/png");
+
+    // 📌 عرض الصورة في الموقع
     document.getElementById("previewImage").src = imageData;
     document.getElementById("previewImage").style.display = "block";
 
     sendImageToServer(imageData);
 });
 
-// Preview Uploaded Image Before Sending
+// 📌 معاينة الصورة المرفوعة
 function previewImage(event) {
     let file = event.target.files[0];
     
@@ -36,26 +38,38 @@ function previewImage(event) {
         imagePreview.src = URL.createObjectURL(file);
         imagePreview.style.display = "block";
     } else {
-        alert("⚠️ No image selected!");
+        alert("⚠️ لم يتم تحديد صورة!");
     }
 }
 
-// Send Image (Captured or Uploaded) to Server
+// 📌 إرسال الصورة إلى Flask API المنشور على Render
+async function sendImageToServer(imageData) {
+    let formData = new FormData();
+    let response = await fetch(imageData);
+    let blob = await response.blob();
+    formData.append("image", blob, "captured_image.png");
+
+    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ استخدام رابط موقعك
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").innerHTML = 
+            <h2>🔍 ${data.fruit_name}</h2>
+            <p>🔥 السعرات الحرارية: ${data.calories}</p>
+            <p>📌 نسبة التعرف: ${data.confidence}</p>
+        ;
+    })
+    .catch(error => {
+        alert("⚠️ حدث خطأ أثناء إرسال الصورة: " + error);
+    });
+}
+
+// 📌 إرسال صورة مرفوعة يدويًا إلى السيرفر
 document.getElementById("uploadImage").addEventListener("click", function() {
     let file = document.getElementById('imageUpload').files[0];
     let formData = new FormData();
     formData.append("image", file);
 
-    fetch("https://your-ngrok-url.ngrok.io/predict", { 
-        method: "POST", 
-        body: formData 
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById("result").innerHTML = `
-            <h2>🔍 ${data.fruit_name}</h2>
-            <p>🔥 Calories: ${data.calories}</p>
-            <p>📌 Confidence: ${data.confidence}</p>
-        `;
-    });
-});
+    fetch("https://fruit-recognition-web.onrender
