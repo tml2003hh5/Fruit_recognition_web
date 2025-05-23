@@ -16,9 +16,13 @@
         <button id="startCamera">📷 Start Camera</button>
         <button id="captureImage">📸 Capture</button>
 
-        <!-- Image Upload -->
-        <input type="file" id="imageUpload" accept="image/*">
-        <button id="uploadImage">📤 Upload & Analyze</button>
+        <!-- Image Upload (Styled as a Button) -->
+        <label class="custom-file-upload">
+            <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+            📤 Choose Image
+        </label>
+
+        <button id="uploadImage">✅ Analyze Image</button>
 
         <!-- Display Captured/Uploaded Image -->
         <canvas id="canvas" style="display:none;"></canvas>
