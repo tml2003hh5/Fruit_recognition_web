@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,23 +9,22 @@
 <body>
     <div class="container">
         <h1>🍉🔍 Smart Fruit Identifier</h1>
-        <p>اختر صورة أو التقطها بالكاميرا!</p>
+        <p>Capture or upload an image to analyze!</p>
 
-        <!-- زر اختيار الصورة من الهاتف -->
-        <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
-
-        <!-- زر تشغيل الكاميرا والتقاط صورة -->
-        <button onclick="startCamera()">📷 تشغيل الكاميرا</button>
-        <button onclick="captureImage()">📸 التقاط صورة</button>
-        <button onclick="uploadImage()">📤 إرسال الصورة</button>
-
-        <!-- عرض الكاميرا داخل الموقع -->
+        <!-- Live Camera Preview -->
         <video id="cameraPreview" autoplay></video>
+        <button id="startCamera">📷 Start Camera</button>
+        <button id="captureImage">📸 Capture</button>
+
+        <!-- Image Upload -->
+        <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+        <button id="uploadImage">📤 Upload & Analyze</button>
+
+        <!-- Display Captured/Uploaded Image -->
         <canvas id="canvas" style="display:none;"></canvas>
+        <img id="previewImage" style="display: none; width: 150px;">
 
-        <!-- عرض الصورة المختارة -->
-        <img id="previewImage" style="display: none; width: 100px; margin-top: 10px;">
-
+        <!-- Results Section -->
         <div id="result"></div>
     </div>
 
