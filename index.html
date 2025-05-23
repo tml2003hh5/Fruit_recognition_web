@@ -11,13 +11,20 @@
         <h1>🍉🔍 Smart Fruit Identifier</h1>
         <p>اختر صورة أو التقطها بالكاميرا!</p>
 
-        <input type="file" id="imageUpload" accept="image/*">
+        <!-- زر اختيار الصورة من الهاتف -->
+        <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+
+        <!-- زر تشغيل الكاميرا والتقاط صورة -->
         <button onclick="startCamera()">📷 تشغيل الكاميرا</button>
         <button onclick="captureImage()">📸 التقاط صورة</button>
         <button onclick="uploadImage()">📤 إرسال الصورة</button>
 
+        <!-- عرض الكاميرا داخل الموقع -->
         <video id="cameraPreview" autoplay></video>
         <canvas id="canvas" style="display:none;"></canvas>
+
+        <!-- عرض الصورة المختارة -->
+        <img id="previewImage" style="display: none; width: 100px; margin-top: 10px;">
 
         <div id="result"></div>
     </div>
