@@ -30,8 +30,14 @@ document.getElementById("captureImage").addEventListener("click", function() {
 // Preview Uploaded Image Before Sending
 function previewImage(event) {
     let file = event.target.files[0];
-    document.getElementById("previewImage").src = URL.createObjectURL(file);
-    document.getElementById("previewImage").style.display = "block";
+    
+    if (file) {
+        let imagePreview = document.getElementById("previewImage");
+        imagePreview.src = URL.createObjectURL(file);
+        imagePreview.style.display = "block";
+    } else {
+        alert("⚠️ No image selected!");
+    }
 }
 
 // Send Image (Captured or Uploaded) to Server
