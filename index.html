@@ -2,10 +2,22 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>موقع التعرف على الفواكه</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Fruit Identifier</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🔍 مرحبًا بك في موقع التعرف على الفواكه!</h1>
-    <p>سيكون هذا الموقع متاحًا قريبًا عبر GitHub Pages.</p>
+    <div class="container">
+        <h1>🍉🔍 Smart Fruit Identifier</h1>
+        <p>اختر صورة أو التقطها بالكاميرا!</p>
+
+        <input type="file" id="imageUpload" accept="image/*">
+        <button onclick="captureImage()">📷 التقاط صورة</button>
+        <button onclick="uploadImage()">📤 إرسال</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
