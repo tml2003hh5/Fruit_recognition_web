@@ -1,19 +1,37 @@
-function uploadImage() {
-    let fileInput = document.getElementById('imageUpload');
-    let file = fileInput.files[0];
+let video = document.getElementById("cameraPreview");
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
 
-    if (!file) {
-        alert("⚠️ الرجاء اختيار صورة أولًا!");
-        return;
-    }
+document.getElementById("startCamera").addEventListener("click", function() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(error => {
+        alert("⚠️ Camera access denied: " + error);
+    });
+});
 
+document.getElementById("captureImage").addEventListener("click", function() {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    let imageData = canvas.toDataURL("image/png");
+    document.getElementById("previewImage").src = imageData;
+    document.getElementById("previewImage").style.display = "block";
+});
+
+function previewImage(event) {
+    let file = event.target.files[0];
+    document.getElementById("previewImage").src = URL.createObjectURL(file);
+    document.getElementById("previewImage").style.display = "block";
+}
+
+document.getElementById("uploadImage").addEventListener("click", function() {
+    let file = document.getElementById('imageUpload').files[0];
     let formData = new FormData();
     formData.append("image", file);
-
-    // عرض الصورة فورًا قبل إرسالها للسيرفر
-    let imagePreview = document.getElementById("previewImage");
-    imagePreview.src = URL.createObjectURL(file);
-    imagePreview.style.display = "block"; // عرض الصورة بعد اختيارها
 
     fetch("https://your-ngrok-url.ngrok.io/predict", { 
         method: "POST", 
@@ -23,8 +41,8 @@ function uploadImage() {
     .then(data => {
         document.getElementById("result").innerHTML = `
             <h2>🔍 ${data.fruit_name}</h2>
-            <p>🔥 السعرات الحرارية: ${data.calories}</p>
-            <p>📌 نسبة التعرف: ${data.confidence}</p>
+            <p>🔥 Calories: ${data.calories}</p>
+            <p>📌 Confidence: ${data.confidence}</p>
         `;
     });
-}
+});
