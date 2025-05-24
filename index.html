@@ -1,36 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Fruit Identifier</title>
+    <title>تحليل الفاكهة والخضروات</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🍉🔍 Smart Fruit Identifier</h1>
-        <p>Capture or upload an image to analyze!</p>
 
-        <!-- Live Camera Preview -->
-        <video id="cameraPreview" autoplay></video>
-        <button id="startCamera">📷 Start Camera</button>
-        <button id="captureImage">📸 Capture</button>
+    <h1>🔍 تحليل الفاكهة والخضروات</h1>
 
-        <!-- Image Upload (Styled as a Button) -->
-        <label class="custom-file-upload">
-            <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
-            📤 Choose Image
-        </label>
+    <!-- تشغيل الكاميرا -->
+    <button id="startCamera">📷 تشغيل الكاميرا</button>
+    <video id="cameraPreview" autoplay></video>
+    
+    <!-- التقاط صورة -->
+    <button id="captureImage">📸 التقاط صورة</button>
 
-        <button id="uploadImage">✅ Analyze Image</button>
+    <!-- رفع صورة من الجهاز -->
+    <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
+    <button id="uploadImage">⬆️ رفع الصورة</button>
 
-        <!-- Display Captured/Uploaded Image -->
-        <canvas id="canvas" style="display:none;"></canvas>
-        <img id="previewImage" style="display: none; width: 150px;">
-
-        <!-- Results Section -->
-        <div id="result"></div>
-    </div>
+    <!-- معاينة الصورة -->
+    <img id="previewImage" alt="المعاينة" style="display:none;">
+    
+    <!-- عرض النتائج -->
+    <div id="result"></div>
 
     <script src="script.js"></script>
 </body>
