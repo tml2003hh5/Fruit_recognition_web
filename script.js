@@ -1,5 +1,5 @@
 let video = document.getElementById("cameraPreview");
-let canvas = document.getElementById("canvas");
+let canvas = document.createElement("canvas");
 let context = canvas.getContext("2d");
 
 // 📌 تشغيل الكاميرا
@@ -14,15 +14,13 @@ document.getElementById("startCamera").addEventListener("click", function() {
     });
 });
 
-// 📌 التقاط صورة من الكاميرا وإرسالها إلى السيرفر
+// 📌 التقاط صورة من الكاميرا
 document.getElementById("captureImage").addEventListener("click", function() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     let imageData = canvas.toDataURL("image/png");
-
-    // 📌 عرض الصورة في الموقع
     document.getElementById("previewImage").src = imageData;
     document.getElementById("previewImage").style.display = "block";
 
@@ -49,7 +47,7 @@ async function sendImageToServer(imageData) {
     let blob = await response.blob();
     formData.append("image", blob, "captured_image.png");
 
-    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ استخدام رابط موقعك
+    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ رابط API
         method: "POST",
         body: formData
     })
@@ -72,4 +70,19 @@ document.getElementById("uploadImage").addEventListener("click", function() {
     let formData = new FormData();
     formData.append("image", file);
 
-    fetch("https://fruit-recognition-web.onrender
+    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ رابط API
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("result").innerHTML = 
+            <h2>🔍 ${data.fruit_name}</h2>
+            <p>🔥 السعرات الحرارية: ${data.calories}</p>
+            <p>📌 نسبة التعرف: ${data.confidence}</p>
+        ;
+    })
+    .catch(error => {
+        alert("⚠️ حدث خطأ أثناء إرسال الصورة: " + error);
+    });
+});
