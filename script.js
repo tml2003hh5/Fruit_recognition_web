@@ -40,14 +40,14 @@ function previewImage(event) {
     }
 }
 
-// 📌 إرسال الصورة إلى Flask API المنشور على Render
+// 📌 إرسال الصورة إلى Flask API عبر Ngrok
 async function sendImageToServer(imageData) {
     let formData = new FormData();
     let response = await fetch(imageData);
     let blob = await response.blob();
     formData.append("image", blob, "captured_image.png");
 
-    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ رابط API
+    fetch("https://f32a-34-171-76-142.ngrok-free.app/predict", {  // ✅ رابط Ngrok API
         method: "POST",
         body: formData
     })
@@ -70,7 +70,7 @@ document.getElementById("uploadImage").addEventListener("click", function() {
     let formData = new FormData();
     formData.append("image", file);
 
-    fetch("https://fruit-recognition-web.onrender.com/predict", {  // ✅ رابط API
+    fetch("https://f32a-34-171-76-142.ngrok-free.app/predict", {  // ✅ رابط Ngrok API
         method: "POST",
         body: formData
     })
