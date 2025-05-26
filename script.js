@@ -2,19 +2,12 @@ let video = document.getElementById("cameraPreview");
 let canvas = document.createElement("canvas");
 let context = canvas.getContext("2d");
 
-// 📌 تشغيل الكاميرا
-document.getElementById("startCamera").addEventListener("click", function () {
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-            video.srcObject = stream;
-            video.style.display = "block";
-        })
-        .catch(error => {
-            alert("⚠️ لا يمكن تشغيل الكاميرا: " + error.message);
-        });
-});
+// ✅ Start Camera Automatically
+navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => video.srcObject = stream)
+    .catch(error => alert("⚠️ Camera access denied!"));
 
-// 📌 التقاط صورة من الكاميرا
+// ✅ Capture Image from Live Stream
 document.getElementById("captureImage").addEventListener("click", function () {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -23,82 +16,45 @@ document.getElementById("captureImage").addEventListener("click", function () {
     let imageData = canvas.toDataURL("image/png");
     document.getElementById("previewImage").src = imageData;
     document.getElementById("previewImage").style.display = "block";
-
-    sendImageToServer(imageData);
 });
 
-// 📌 معاينة الصورة المرفوعة
-function previewImage(event) {
+// ✅ Upload Image from Device
+document.getElementById("imageUpload").addEventListener("change", function (event) {
     let file = event.target.files[0];
-
     if (file) {
-        let imagePreview = document.getElementById("previewImage");
-        imagePreview.src = URL.createObjectURL(file);
-        imagePreview.style.display = "block";
-    } else {
-        alert("⚠️ لم يتم تحديد صورة!");
+        document.getElementById("previewImage").src = URL.createObjectURL(file);
+        document.getElementById("previewImage").style.display = "block";
     }
-}
+});
 
-// 📌 إرسال الصورة إلى Flask API عبر Ngrok
-async function sendImageToServer(imageData) {
+// ✅ Send Image to Flask API
+document.getElementById("sendImage").addEventListener("click", async function () {
+    let imageElement = document.getElementById("previewImage");
     let formData = new FormData();
-    let response = await fetch(imageData);
-    let blob = await response.blob();
-    formData.append("image", blob, "captured_image.png");
 
-    console.log("📤 إرسال الصورة إلى السيرفر...");
+    // Convert base64 to blob if image is captured
+    if (imageElement.src.startsWith("data:image")) {
+        let response = await fetch(imageElement.src);
+        let blob = await response.blob();
+        formData.append("image", blob, "captured_image.png");
+    } else {
+        let file = document.getElementById("imageUpload").files[0];
+        formData.append("image", file);
+    }
 
-    fetch("https://f32a-34-171-76-142.ngrok-free.app/predict", {  // ✅ رابط Ngrok API
+    fetch("http://127.0.0.1:5000/predict", {
         method: "POST",
         body: formData
     })
-    .then(response => {
-        console.log("✅ استجابة السيرفر:", response);
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log("📌 البيانات المستلمة:", data);
-
-        document.getElementById("result").innerHTML = 
-            <h2>🔍 ${data.fruit_name}</h2>
-            <p>🔥 السعرات الحرارية: ${data.calories}</p>
-            <p>📌 نسبة التعرف: ${data.confidence}</p>
-        ;
+        document.getElementById("result").innerHTML = `
+            <h3>📷 Selected Image:</h3>
+            <img src="${imageElement.src}" style="width: 100px;">
+            <h3>🔍 Item Name: ${data.fruit_name}</h3>
+            <h3>📌 Confidence: ${data.confidence}</h3>
+            <h3>🔥 Calories: ${data.calories}</h3>
+        `;
     })
-    .catch(error => {
-        console.error("❌ خطأ أثناء إرسال الصورة:", error);
-        alert("⚠️ حدث خطأ أثناء إرسال الصورة!");
-    });
-}
-
-// 📌 إرسال صورة مرفوعة يدويًا إلى السيرفر
-document.getElementById("uploadImage").addEventListener("click", function () {
-    let file = document.getElementById('imageUpload').files[0];
-    let formData = new FormData();
-    formData.append("image", file);
-
-    console.log("📤 إرسال الصورة المرفوعة إلى السيرفر...");
-
-    fetch("https://f32a-34-171-76-142.ngrok-free.app/predict", {  // ✅ رابط Ngrok API
-        method: "POST",
-        body: formData
-    })
-    .then(response => {
-        console.log("✅ استجابة السيرفر:", response);
-        return response.json();
-    })
-    .then(data => {
-        console.log("📌 البيانات المستلمة:", data);
-
-        document.getElementById("result").innerHTML = 
-            <h2>🔍 ${data.fruit_name}</h2>
-            <p>🔥 السعرات الحرارية: ${data.calories}</p>
-            <p>📌 نسبة التعرف: ${data.confidence}</p>
-        ;
-    })
-    .catch(error => {
-        console.error("❌ خطأ أثناء إرسال الصورة:", error);
-        alert("⚠️ حدث خطأ أثناء إرسال الصورة!");
-    });
+    .catch(error => alert("⚠️ Error sending image!"));
 });
