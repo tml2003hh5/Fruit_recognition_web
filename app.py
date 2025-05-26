@@ -1,20 +1,18 @@
 from flask import Flask, request, jsonify
-import numpy as np
 import cv2
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 import os
 
 app = Flask(__name__)
 
-# ✅ تحميل النموذج من مجلد `database`
-model_path = "database/FV.h5"
-if os.path.exists(model_path):
-    model = load_model(model_path)
-else:
-    raise FileNotFoundError(f"⚠️ الملف {model_path} غير موجود، تأكد من وضعه داخل `database/`!")
+# تحميل النموذج المدرب
+dataset_folder = "/kaggle/input/ibratml"
+model_path = os.path.join(dataset_folder, "FV.h5")
+model = load_model(model_path)
 
-# ✅ قاموس الفواكه والخضروات مع السعرات الحرارية
+# قاموس الفئات مع السعرات الحرارية
 labels = {
     0: ('Apple', 52), 1: ('Banana', 89), 2: ('Beetroot', 43), 3: ('Bell Pepper', 20),
     4: ('Cabbage', 25), 5: ('Capsicum', 40), 6: ('Carrot', 41), 7: ('Cauliflower', 25),
@@ -30,7 +28,6 @@ labels = {
 def preprocess_image(image):
     """تحضير الصورة للإدخال في النموذج."""
     img = cv2.imdecode(np.frombuffer(image.read(), np.uint8), cv2.IMREAD_COLOR)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (224, 224))
     img = img / 255.0
     img = np.expand_dims(img, axis=0)
@@ -38,7 +35,6 @@ def preprocess_image(image):
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    """استقبال الصورة وإرجاع اسم العنصر ونسبة التعرف والسعرات الحرارية."""
     if "image" not in request.files:
         return jsonify({"error": "⚠️ لم يتم تحميل صورة!"})
 
@@ -47,17 +43,14 @@ def predict():
     prediction = model.predict(processed_image)
 
     predicted_label = np.argmax(prediction)
-    confidence_score = round(float(np.max(prediction) * 100), 2)  
-
-    # 🔹 جلب اسم العنصر والسعرات الحرارية من القاموس
+    confidence = round(float(np.max(prediction) * 100), 2)
     item_name, calories = labels.get(predicted_label, ("Unknown", "N/A"))
 
     return jsonify({
         "fruit_name": item_name,
-        "confidence": f"{confidence_score}%",
-        "calories": f"{calories} (لكل 100 جرام)"
+        "confidence": f"{confidence}%",
+        "calories": f"{calories} kcal"
     })
 
-# ✅ تشغيل Flask API داخل Render
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=5000)
