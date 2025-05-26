@@ -1,30 +1,30 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحليل الفاكهة والخضروات</title>
+    <title>Image Recognition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>🔍 تحليل الفاكهة والخضروات</h1>
+    <h1>🔍 Fruit & Vegetable Recognition</h1>
 
-    <!-- تشغيل الكاميرا -->
-    <button id="startCamera">📷 تشغيل الكاميرا</button>
+    <!-- Live Camera Preview -->
     <video id="cameraPreview" autoplay></video>
-    
-    <!-- التقاط صورة -->
-    <button id="captureImage">📸 التقاط صورة</button>
 
-    <!-- رفع صورة من الجهاز -->
-    <input type="file" id="imageUpload" accept="image/*" onchange="previewImage(event)">
-    <button id="uploadImage">⬆️ رفع الصورة</button>
+    <!-- Buttons -->
+    <button id="captureImage">📸 Capture</button>
+    <input type="file" id="imageUpload" accept="image/*">
+    <button id="uploadImage">⬆️ Upload Image</button>
+    <button id="sendImage">🚀 Send</button>
 
-    <!-- معاينة الصورة -->
-    <img id="previewImage" alt="المعاينة" style="display:none;">
-    
-    <!-- عرض النتائج -->
+    <!-- Preview Image -->
+    <h2>Preview:</h2>
+    <img id="previewImage" alt="Captured Image" style="display:none;">
+
+    <!-- Result Display -->
+    <h2>Results:</h2>
     <div id="result"></div>
 
     <script src="script.js"></script>
